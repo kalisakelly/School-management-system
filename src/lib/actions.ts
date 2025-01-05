@@ -7,6 +7,7 @@ import {
   StudentSchema,
   SubjectSchema,
   TeacherSchema,
+  ParentSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
@@ -460,6 +461,48 @@ export const deleteExam = async (
     });
 
     // revalidatePath("/list/subjects");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  try {
+    const user = await clerkClient.users.createUser({
+      username: data.username,
+      password: data.password,
+      firstName: data.name,
+      lastName: data.surname,
+      publicMetadata:{role:"parent"}
+    });
+
+    await prisma.parent.create({
+      data: {
+        id: data.id,
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone ,
+        address: data.address,
+        // img: data.img || null,
+        // bloodType: data.bloodType,
+        // sex: data.sex,
+        // birthday: data.birthday,
+        // students: {
+        //   connect: data.students?.map((studentId: string) => ({
+        //     id: parseInt(studentId),
+        //   })),
+        // },
+      },
+    });
+
+    // revalidatePath("/list/teachers");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);

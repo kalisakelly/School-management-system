@@ -54,7 +54,7 @@ model Teacher {
 }
 
 model Parent {
-  id        String    @id
+  id        String    @id 
   username  String    @unique
   name      String
   surname   String
