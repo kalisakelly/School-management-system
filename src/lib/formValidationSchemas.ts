@@ -90,7 +90,7 @@ export type ExamSchema = z.infer<typeof examSchema>;
 
 export const parentSchema = z.object({
 
-  id: z.string(),
+  id: z.string().optional(),
   username: z.string().min(3, { message: "Username must be at least 3 characters long!" }),
   name: z.string().min(1, { message: "First name is required!" }),
   surname: z.string().min(1, { message: "Last name is required!" }),
@@ -111,3 +111,15 @@ export const parentSchema = z.object({
 })
 
 export type ParentSchema = z.infer<typeof parentSchema>
+
+
+
+export const announcementSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  date: z.string().min(1, "Date is required"),
+  class: z.array(z.number()).length(1), 
+});
+
+export type AnnouncementSchema = z.infer<typeof announcementSchema>;
+

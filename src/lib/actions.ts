@@ -8,6 +8,7 @@ import {
   SubjectSchema,
   TeacherSchema,
   ParentSchema,
+  AnnouncementSchema
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
@@ -473,39 +474,165 @@ export const createParent = async (
   data: ParentSchema
 ) => {
   try {
+    // Create the user in Clerk
     const user = await clerkClient.users.createUser({
       username: data.username,
       password: data.password,
       firstName: data.name,
       lastName: data.surname,
-      publicMetadata:{role:"parent"}
+      publicMetadata: { role: "parent" },
     });
 
-    await prisma.parent.create({
+    // Create the parent in your database, using the generated Clerk user ID for the 'id' field
+    const parent = await prisma.parent.create({
       data: {
+        id: user.id,              // Use the generated Clerk user ID as the parent ID
+        username: data.username,  // username from input
+        name: data.name,          // name from input
+        surname: data.surname,    // surname from input
+        email: data.email || null, // optional email (if missing, store null)
+        phone: data.phone,        // phone from input
+        address: data.address,    // address from input
+        createdAt: new Date(),    // createdAt timestamp (use new Date() for current time)
+        students: {
+          connect: data.students?.map((studentId: string) => ({
+            id: studentId, // Use student ID from form data to connect
+          })),
+        },
+      },
+    });
+
+    return { success: true, error: false, parent }; // Return success response with the parent data
+  } catch (err) {
+    console.error("Error creating parent: ", err);
+    return { success: false, error: true };
+  }
+};
+
+
+
+
+export const updateParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+
+  try {
+    // First, update the user in Clerk
+    await clerkClient.users.updateUser(data.id, {
+      username: data.username,
+      ...(data.password !== "" && { password: data.password }),
+      firstName: data.name,
+      lastName: data.surname,
+    });
+
+    // Update the parent in Prisma
+    await prisma.parent.update({
+      where: {
         id: data.id,
+      },
+      data: {
         username: data.username,
         name: data.name,
         surname: data.surname,
         email: data.email || null,
-        phone: data.phone ,
+        phone: data.phone,
         address: data.address,
-        // img: data.img || null,
-        // bloodType: data.bloodType,
-        // sex: data.sex,
-        // birthday: data.birthday,
-        // students: {
-        //   connect: data.students?.map((studentId: string) => ({
-        //     id: parseInt(studentId),
-        //   })),
-        // },
+        // You can add more fields here if necessary
       },
     });
 
-    // revalidatePath("/list/teachers");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
     return { success: false, error: true };
   }
 };
+
+export const deleteParent = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get("id") as string; // Get the parent id from the FormData
+
+  try {
+    // First, delete the user in Clerk
+    await clerkClient.users.deleteUser(id);
+
+    // Then, delete the parent record in Prisma
+    await prisma.parent.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    // If you want to revalidate the path, you can uncomment this
+    // revalidatePath("/list/parents");
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+
+
+export const createAnnouncement = async (
+  currentState: CurrentState,
+  data: AnnouncementSchema
+) => {
+  try {
+    await prisma.announcement.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        date: new Date(data.date), // Ensure date is properly converted to a Date object
+        class: {
+          connect: data.class ? { id: data.class[0] } : undefined, 
+        },
+      },
+    });
+    
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+// export const updateAnnouncement = async (
+//   currentState: CurrentState,
+//   data: AnnouncementSchema
+// ) => {
+//   if (!data.id) {
+//     return { success: false, error: true };
+//   }
+
+//   try {
+//     await prisma.announcement.update({
+//       where: {
+//         id: data.id,
+//       },
+//       data: {
+//         title: data.title,
+//         description: data.description,
+//         date: data.date,
+//         class: {
+//           set: data.class?.map((classId) => ({ id: classId })) || [], // Set the classes correctly
+//         },
+//       },
+//     });
+
+//     // revalidatePath("/list/announcements");
+//     return { success: true, error: false };
+//   } catch (err) {
+//     console.log(err);
+//     return { success: false, error: true };
+//   }
+// };
+
