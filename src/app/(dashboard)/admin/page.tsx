@@ -4,6 +4,7 @@ import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
 import FinanceChart from "@/components/FinanceChart";
 import UserCard from "@/components/UserCard";
+import ReportPage from "@/components/reports"; // Import the ReportPage component
 
 const AdminPage = ({
   searchParams,
@@ -39,8 +40,12 @@ const AdminPage = ({
       </div>
       {/* RIGHT */}
       <div className="w-full lg:w-1/3 flex flex-col gap-8">
-        <EventCalendarContainer searchParams={searchParams}/>
+        <EventCalendarContainer searchParams={searchParams} />
         <Announcements />
+        {/* Add ReportPage here */}
+        <div className="bg-white shadow rounded-lg p-4">
+          <ReportPage />
+        </div>
       </div>
     </div>
   );
