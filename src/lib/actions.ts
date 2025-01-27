@@ -8,7 +8,8 @@ import {
   SubjectSchema,
   TeacherSchema,
   ParentSchema,
-  AnnouncementSchema
+  AnnouncementSchema,
+  LessonSchema
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
@@ -605,6 +606,38 @@ export const createAnnouncement = async (
   }
 };
 
+
+// export const CreateLesson = async (
+//   currentState: CurrentState, // Replace `any` with the correct type for `currentState`
+//   data: LessonSchema
+// ) => {
+//   try {
+//     await prisma.lesson.create({
+//       data: {
+//         name: data.name,
+//         day: data.day, // Ensure `data.day` is a valid `Day` enum value
+//         startTime: new Date(data.startTime), // Convert string to DateTime
+//         endTime: new Date(data.endTime), // Convert string to DateTime
+//         subject: {
+//           connect: { id: data.subject }, // Connect using the subject ID
+//         },
+//         teacher: {
+//           connect: { id: data.teacher }, // Connect using the teacher ID
+//         },
+//         exams:{
+//           connect: { id: data.exam?{id: data.exam[0]} : undefined}, // Connect using the
+//         }
+//         assignments: data.assignments ? { create: data.assignments.map(assignment => ({ name: assignment })) } : undefined,
+//         attendances: data.attendance ? { create: data.attendance.map(attendance => ({ name: attendance })) } : undefined,
+//       },
+//     });
+
+//     return { success: true, error: false };
+//   } catch (err) {
+//     console.log(err);
+//     return { success: false, error: true };
+//   }
+// };
 // export const updateAnnouncement = async (
 //   currentState: CurrentState,
 //   data: AnnouncementSchema

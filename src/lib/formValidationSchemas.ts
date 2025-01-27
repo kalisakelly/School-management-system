@@ -1,4 +1,6 @@
 import { TypeOf, z } from "zod";
+import { Day } from '@prisma/client';
+
 
 export const subjectSchema = z.object({
   id: z.coerce.number().optional(),
@@ -121,5 +123,20 @@ export const announcementSchema = z.object({
   class: z.array(z.number()).length(1), 
 });
 
+// const DayEnum = z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]);
+
 export type AnnouncementSchema = z.infer<typeof announcementSchema>;
 
+export const lessonSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  day: z.nativeEnum(Day), // Use the Prisma `Day` enum
+  startTime: z.string().min(1, "Start time is required"),
+  endTime: z.string().min(1, "End time is required"),
+  subject: z.number().min(1, "Subject is required"),
+  teacher: z.string().min(1, "Teacher is required"),
+  exam: z.array(z.string()),
+  assignments: z.array(z.string()).optional(),
+  attendance: z.array(z.string()).optional(),
+});
+
+export type LessonSchema = z.infer<typeof lessonSchema>;
