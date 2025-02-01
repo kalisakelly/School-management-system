@@ -14,14 +14,14 @@ const Announcements = async () => {
   const data = await prisma.announcement.findMany({
     take: 3,
     orderBy: { date: "desc" },
-    where: {
-      ...(role !== "admin" && {
-        OR: [
-          { classId: null },
-          { class: roleConditions[role as keyof typeof roleConditions] || {} },
-        ],
-      }),
-    },
+    // where: {
+    //   ...(role !== "parent" && {
+    //     OR: [
+    //       { classId: null },
+    //       { class: roleConditions[role as keyof typeof roleConditions] || {} },
+    //     ],
+    //   }),
+    // },
   });
 
   return (
