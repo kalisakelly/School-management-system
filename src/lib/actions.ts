@@ -9,7 +9,9 @@ import {
   TeacherSchema,
   ParentSchema,
   AnnouncementSchema,
-  LessonSchema
+  LessonSchema,
+  AttendanceSchema,
+  ResultSchema
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
@@ -606,66 +608,239 @@ export const createAnnouncement = async (
   }
 };
 
+export const deleteAnnouncement = async (formData: FormData) => {
+  try {
+    const id = formData.get("id") as string;
 
-// export const CreateLesson = async (
-//   currentState: CurrentState, // Replace `any` with the correct type for `currentState`
-//   data: LessonSchema
-// ) => {
+    if (!id) {
+      throw new Error("Announcement ID is required");
+    }
+
+    // Delete the announcement from the database
+    await prisma.announcement.delete({
+      where: {
+        id,
+      },
+    });
+
+    // Revalidate the cache and redirect
+    revalidatePath("/announcements"); // Update this path to match your announcements page
+    return { success: true, error: false };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createLesson = async (
+  currentState: CurrentState,
+  data: LessonSchema
+) => {
+  try {
+    await prisma.lesson.create({
+      data: {
+        name: data.name, // Use the name from the form data
+        day: data.day, // Use the day from the form data
+        startTime: new Date(data.startTime), // Convert startTime to a Date object
+        endTime: new Date(data.endTime), // Convert endTime to a Date object
+        subjectId: parseInt(data.subjectId), // Convert subjectId to a number
+        classId: parseInt(data.classId), // Convert classId to a number
+        teacherId: data.teacherId,
+      },
+    });
+    
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+// export const createLesson = async (data: LessonSchema) => {
 //   try {
 //     await prisma.lesson.create({
 //       data: {
-//         name: data.name,
-//         day: data.day, // Ensure `data.day` is a valid `Day` enum value
-//         startTime: new Date(data.startTime), // Convert string to DateTime
-//         endTime: new Date(data.endTime), // Convert string to DateTime
-//         subject: {
-//           connect: { id: data.subject }, // Connect using the subject ID
-//         },
-//         teacher: {
-//           connect: { id: data.teacher }, // Connect using the teacher ID
-//         },
-//         exams:{
-//           connect: { id: data.exam?{id: data.exam[0]} : undefined}, // Connect using the
-//         }
-//         assignments: data.assignments ? { create: data.assignments.map(assignment => ({ name: assignment })) } : undefined,
-//         attendances: data.attendance ? { create: data.attendance.map(attendance => ({ name: attendance })) } : undefined,
+//         name: "Mathematics Lesson",
+//         day: "FRIDAY",
+//         startTime: "data.startTime",
+//         endTime: "data.endTime",
+//         subjectId: 9,
+//         classId: 9,
+//         teacherId: "data.teacherId",
 //       },
 //     });
 
+//     revalidatePath("/lessons");
 //     return { success: true, error: false };
 //   } catch (err) {
-//     console.log(err);
+//     console.error(err);
 //     return { success: false, error: true };
 //   }
 // };
-// export const updateAnnouncement = async (
-//   currentState: CurrentState,
-//   data: AnnouncementSchema
-// ) => {
-//   if (!data.id) {
-//     return { success: false, error: true };
-//   }
 
-//   try {
-//     await prisma.announcement.update({
-//       where: {
-//         id: data.id,
-//       },
-//       data: {
-//         title: data.title,
-//         description: data.description,
-//         date: data.date,
-//         class: {
-//           set: data.class?.map((classId) => ({ id: classId })) || [], // Set the classes correctly
-//         },
-//       },
-//     });
+export const updateLesson = async (data: LessonSchema & { id: number }) => {
+  try {
+    await prisma.lesson.update({
+      where: { id: data.id },
+      data: {
+        name: data.name,
+        day: data.day,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        subjectId: parseInt(data.subjectId),
+        classId: parseInt(data.classId),
+        teacherId: data.teacherId,
+      },
+    });
 
-//     // revalidatePath("/list/announcements");
-//     return { success: true, error: false };
-//   } catch (err) {
-//     console.log(err);
-//     return { success: false, error: true };
-//   }
-// };
+    revalidatePath("/lessons");
+    return { success: true, error: false };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteLesson = async (formData: FormData) => {
+  try {
+    const id = formData.get("id") as string;
+
+    if (!id) {
+      throw new Error("Lesson ID is required");
+    }
+
+    await prisma.lesson.delete({
+      where: { id: parseInt(id) },
+    });
+
+    revalidatePath("/lessons");
+    return { success: true, error: false };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true };
+  }
+};
+
+
+export const createAttendance = async (data: AttendanceSchema) => {
+  try {
+    const parsedDate = new Date(data.date).toISOString();
+    await prisma.attendance.create({
+      data: {
+        date: data.date,
+        present: data.present,
+        studentId: data.studentId,
+        lessonId: data.lessonId
+      },
+    });
+
+    revalidatePath("/attendances");
+    return { success: true, error: false };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateAttendance = async (data: AttendanceSchema & { id: number }) => {
+  try {
+    await prisma.attendance.update({
+      where: { id: data.id },
+      data: {
+        date: data.date,
+        present: data.present,
+        studentId: data.studentId,
+        lessonId: data.lessonId,
+      },
+    });
+
+    revalidatePath("/attendances");
+    return { success: true, error: false };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteAttendance = async (formData: FormData) => {
+  try {
+    const id = formData.get("id") as string;
+
+    if (!id) {
+      throw new Error("Attendance ID is required");
+    }
+
+    await prisma.attendance.delete({
+      where: { id: parseInt(id) },
+    });
+
+    revalidatePath("/attendances");
+    return { success: true, error: false };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createResult = async (
+  currentState: CurrentState,
+  data: ResultSchema
+) => {
+  try {
+    await prisma.result.create({
+      data: {
+       score: data.score,
+        examId: parseInt(data.examId),
+        assignmentId: parseInt(data.assignmentId),
+        studentId: data.studentId,
+      },
+    });
+    
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateResult = async (data: ResultSchema & { id: number }) => {
+  try {
+    await prisma.result.update({
+      where: { id: data.id },
+      data: {
+        score: data.score,
+        examId: parseInt(data.examId),
+        assignmentId: parseInt(data.assignmentId),
+        studentId: data.studentId,
+      },
+    });
+
+    revalidatePath("/results"); // Update the path to match your results page
+    return { success: true, error: false };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteResult = async (formData: FormData) => {
+  try {
+    const id = formData.get("id") as string;
+
+    if (!id) {
+      throw new Error("Result ID is required");
+    }
+
+    await prisma.result.delete({
+      where: { id: parseInt(id) },
+    });
+
+    revalidatePath("/results"); // Update the path to match your results page
+    return { success: true, error: false };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true };
+  }
+};
 

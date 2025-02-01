@@ -129,14 +129,37 @@ export type AnnouncementSchema = z.infer<typeof announcementSchema>;
 
 export const lessonSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  day: z.nativeEnum(Day), // Use the Prisma `Day` enum
+  day: z.string(),
+ // day: z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]),
   startTime: z.string().min(1, "Start time is required"),
   endTime: z.string().min(1, "End time is required"),
-  subject: z.number().min(1, "Subject is required"),
-  teacher: z.string().min(1, "Teacher is required"),
-  exam: z.array(z.string()),
-  assignments: z.array(z.string()).optional(),
-  attendance: z.array(z.string()).optional(),
+  subjectId: z.string().min(1, "Subject is required"),
+  classId: z.string().min(1, "Class is required"),
+  teacherId: z.string().min(1, "Teacher is required"),
 });
 
 export type LessonSchema = z.infer<typeof lessonSchema>;
+
+
+export const attendanceSchema = z.object({
+  date: z.string(),
+  present: z.boolean().default(false),
+  studentId: z.string().min(1, "Student is required"),
+  lessonId: z.number().min(1, "Lesson is required"),
+});
+
+export type AttendanceSchema = z.infer<typeof attendanceSchema>;
+
+
+export const resultSchema = z.object({
+
+  score: z.number().min(0, "Score must be a positive number"),
+  examId: z.string().min(1, "Exam is required"),
+  assignmentId: z.string().min(1, "Assignment is required"),
+  studentId: z.string().min(1, "Student is required"),
+
+})
+
+export type ResultSchema = z.infer<typeof resultSchema>;
+
+
