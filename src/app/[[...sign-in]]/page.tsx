@@ -21,6 +21,7 @@ const LoginPage = () => {
   }, [user, router]);
 
   return (
+    
     <div className="h-screen flex items-center justify-center bg-lamaSkyLight">
       <SignIn.Root>
         <SignIn.Step

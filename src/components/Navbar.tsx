@@ -1,3 +1,4 @@
+// src\components\Navbar.tsx
 import { UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
@@ -5,7 +6,8 @@ import Image from "next/image";
 const Navbar = async () => {
   const user = await currentUser();
   return (
-    <div className="flex items-center justify-between p-4">
+    <nav className="sticky top-0 w-full z-50 bg-white shadow-md">
+    <div className="flex  items-center justify-between p-4">
       {/* SEARCH BAR */}
       <div className="hidden md:flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-gray-300 px-2">
         <Image src="/search.png" alt="" width={14} height={14} />
@@ -36,6 +38,7 @@ const Navbar = async () => {
         <UserButton />
       </div>
     </div>
+  </nav>
   );
 };
 
