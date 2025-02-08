@@ -15,6 +15,7 @@ import {
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
+import { Day } from "@prisma/client";
 
 type CurrentState = { success: boolean; error: boolean };
 
@@ -619,7 +620,7 @@ export const deleteAnnouncement = async (formData: FormData) => {
     // Delete the announcement from the database
     await prisma.announcement.delete({
       where: {
-        id,
+        id: parseInt(id),
       },
     });
 
@@ -640,7 +641,7 @@ export const createLesson = async (
     await prisma.lesson.create({
       data: {
         name: data.name, // Use the name from the form data
-        day: data.day, // Use the day from the form data
+        day: data.day as Day, // Use the day from the form data
         startTime: new Date(data.startTime), // Convert startTime to a Date object
         endTime: new Date(data.endTime), // Convert endTime to a Date object
         subjectId: parseInt(data.subjectId), // Convert subjectId to a number
@@ -684,7 +685,7 @@ export const updateLesson = async (data: LessonSchema & { id: number }) => {
       where: { id: data.id },
       data: {
         name: data.name,
-        day: data.day,
+        day: data.day as Day,
         startTime: data.startTime,
         endTime: data.endTime,
         subjectId: parseInt(data.subjectId),
