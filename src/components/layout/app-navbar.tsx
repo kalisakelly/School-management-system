@@ -3,6 +3,7 @@ import { Bell, MessageCircle, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { SidebarTrigger } from "../ui/sidebar"
 
 interface AppNavbarProps {
   userRole: string
@@ -13,7 +14,9 @@ export function AppNavbar({ userRole, userName }: AppNavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container px-4 flex h-[3.23rem] items-center justify-between">
+      <SidebarTrigger className="mr-1 block sm:hidden -ml-2" />
         <div className="hidden md:flex">
+        <SidebarTrigger className="mr-1 -ml-2" />
           <div className="relative ">
             <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input placeholder="Search..." className="w-[200px] pl-8" />

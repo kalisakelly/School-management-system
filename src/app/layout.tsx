@@ -28,7 +28,7 @@ export default function RootLayout({
             [&::-webkit-scrollbar-thumb]:bg-gray-300
             dark:[&::-webkit-scrollbar-track]:bg-neutral-700
             dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500`}>
-          {children} <ToastContainer position="bottom-right" theme="dark" />
+          {children} <ToastContainer position="bottom-right" theme="colored" />
         </body>
       </html>
     </ClerkProvider>

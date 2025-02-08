@@ -1,3 +1,4 @@
+// src\reports\announcements.ts
 import { PrismaClient } from "@prisma/client";
 import * as XLSX from "xlsx";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -10,6 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { startDate, endDate, type } = req.body;
+  console.log("Request Body:", req.body); // Debug: Log the request body
 
   try {
     if (type === "announcement") {

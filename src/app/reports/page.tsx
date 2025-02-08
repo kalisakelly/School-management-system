@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
-import { toast } from "react-toastify"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "react-hot-toast"
 import type { DateRange } from "react-day-picker"
 import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange"
 import { Loader } from "lucide-react"
@@ -67,18 +67,20 @@ const ReportPage = () => {
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto border-none">
-     <h3 className="text-xl pl-5 py-4 font-semibold">Generate Report</h3>
-      <CardContent className="space-y-6 ">
+    <Card className="w-full max-w-2xl mx-auto mt-8 shadow-lg">
+      <CardHeader className="">
+        <CardTitle className="text-2xl font-bold">Generate Reports</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6 p-6">
         <div className="space-y-2">
-          <Label htmlFor="dateRange" className="">
+          <Label htmlFor="dateRange" className="text-lg font-semibold">
             Date Range
           </Label>
           <DatePickerWithRange value={dateRange} onChange={(newDateRange) => setDateRange(newDateRange as DateRange | undefined)} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="reportType" className="">
+          <Label htmlFor="reportType" className="text-lg font-semibold">
             Report Type
           </Label>
           <Select value={reportType} onValueChange={setReportType}>
@@ -160,7 +162,7 @@ const ReportPage = () => {
           </div>
         )}
 
-        <Button onClick={handleGenerateReport} disabled={isLoading} className="w-full text font-semibold">
+        <Button onClick={handleGenerateReport} disabled={isLoading} className="w-full text-lg font-semibold">
           {isLoading ? (
             <>
               <Loader className="mr-2 h-4 w-4 animate-spin" />

@@ -43,7 +43,7 @@ const AdminPage = ({
         <EventCalendarContainer searchParams={searchParams} />
         <Announcements />
         {/* Add ReportPage here */}
-        <div className="bg-white shadow rounded-lg p-4">
+        <div className="bg-white rounded-lg ">
           <ReportPage />
         </div>
       </div>

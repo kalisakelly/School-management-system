@@ -37,7 +37,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
 
 interface MenuItem {
@@ -178,7 +177,6 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
         <Link href="/" className="flex items-center gap-2">
           <Image src="/logo.png" alt="EduConnect" width={32} height={32} className="object-cover h-5 w-5" />
           <span className="font-bold text-xl hidden lg:block">EduConnect</span>
-          <SidebarTrigger className="-ml-1" />
         </Link>
       </SidebarHeader>
       <SidebarContent className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 dark:scrollbar-track-neutral-700 dark:scrollbar-thumb-neutral-500   [&::-webkit-scrollbar]:w-[0.4rem]
