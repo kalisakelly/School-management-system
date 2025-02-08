@@ -98,7 +98,7 @@ const ReportPage = () => {
 
         {reportType === "attendance" && (
           <div className="space-y-2">
-            <Label htmlFor="classOrStudentId" className="text-lg font-semibold">
+            <Label htmlFor="classOrStudentId" className="">
               Class ID or Student ID (Optional)
             </Label>
             <Input
@@ -114,7 +114,7 @@ const ReportPage = () => {
 
         {reportType === "performance" && (
           <div className="space-y-2">
-            <Label htmlFor="studentId" className="text-lg font-semibold">
+            <Label htmlFor="studentId" className="">
               Student ID
             </Label>
             <Input
@@ -130,7 +130,7 @@ const ReportPage = () => {
 
         {(reportType === "events" || reportType === "class-composition") && (
           <div className="space-y-2">
-            <Label htmlFor="classId" className="text-lg font-semibold">
+            <Label htmlFor="classId" className="">
               Class ID
             </Label>
             <Input
@@ -146,7 +146,7 @@ const ReportPage = () => {
 
         {reportType === "assignments" && (
           <div className="space-y-2">
-            <Label htmlFor="teacherId" className="text-lg font-semibold">
+            <Label htmlFor="teacherId" className="">
               Teacher ID
             </Label>
             <Input
