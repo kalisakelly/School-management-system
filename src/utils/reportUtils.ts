@@ -9,21 +9,28 @@ const prisma = new PrismaClient();
  */
 export async function generateAttendanceReport(
   startDate: Date,
-  endDate: Date
+  endDate: Date,
+  lessonId?: number, // Optional lessonId filter (number)
+  studentId?: string, // Optional studentId filter (string)
+  present?: boolean // Optional filter for presence (true = Present, false = Absent)
 ) {
+  // Define the base query
   const data = await prisma.attendance.findMany({
     where: {
       date: {
-        gte: startDate,
-        lte: endDate,
+        gte: startDate, // Greater than or equal to start date
+        lte: endDate,   // Less than or equal to end date
       },
+      ...(lessonId !== undefined && { lessonId }), // Include lessonId if provided (number)
+      ...(studentId !== undefined && { studentId }), // Include studentId if provided (string)
+      ...(present !== undefined && { present }), // Include presence status if provided
     },
     include: {
-      student: true,
+      student: true, // Include related student data
       lesson: {
         include: {
-          class: true,
-          teacher: true,
+          class: true, // Include related class data
+          teacher: true, // Include related teacher data
         },
       },
     },
@@ -31,14 +38,15 @@ export async function generateAttendanceReport(
 
   // Transform data for the report
   const reportData = data.map((record) => ({
-    Date: record.date.toISOString().split("T")[0],
-    StudentName: `${record.student.name} ${record.student.surname}`,
-    Lesson: record.lesson.name,
-    Class: record.lesson.class.name,
-    Teacher: `${record.lesson.teacher.name} ${record.lesson.teacher.surname}`,
-    Present: record.present ? "Yes" : "No",
+    Date: record.date.toISOString().split("T")[0], // Extract date part
+    StudentName: `${record.student.name} ${record.student.surname}`, // Student full name
+    Lesson: record.lesson.name, // Lesson name
+    Class: record.lesson.class?.name || "N/A", // Class name (handle null case)
+    Teacher: `${record.lesson.teacher?.name || "N/A"} ${record.lesson.teacher?.surname || "N/A"}`, // Teacher full name (handle null case)
+    Present: record.present ? "Yes" : "No", // Present status
   }));
 
+  // Export the transformed data to Excel
   return exportToExcel(reportData, "AttendanceReport");
 }
 

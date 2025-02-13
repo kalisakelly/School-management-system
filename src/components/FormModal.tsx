@@ -152,7 +152,7 @@ const forms: {
       setOpen={setOpen}
       relatedData={relatedData}
     />
-  ), // Add this
+  ), 
 };
 
 

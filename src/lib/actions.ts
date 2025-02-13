@@ -16,6 +16,7 @@ import {
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { Day } from "@prisma/client";
+import { date } from "zod";
 
 type CurrentState = { success: boolean; error: boolean };
 
@@ -585,54 +586,6 @@ export const deleteParent = async (
 
 
 
-export const createAnnouncement = async (
-  currentState: CurrentState,
-  data: AnnouncementSchema
-) => {
-  try {
-    await prisma.announcement.create({
-      data: {
-        title: data.title,
-        description: data.description,
-        date: new Date(data.date), // Ensure date is properly converted to a Date object
-        class: {
-          connect: data.class ? { id: data.class[0] } : undefined, 
-        },
-      },
-    });
-    
-
-    return { success: true, error: false };
-  } catch (err) {
-    console.log(err);
-    return { success: false, error: true };
-  }
-};
-
-export const deleteAnnouncement = async (formData: FormData) => {
-  try {
-    const id = formData.get("id") as string;
-
-    if (!id) {
-      throw new Error("Announcement ID is required");
-    }
-
-    // Delete the announcement from the database
-    await prisma.announcement.delete({
-      where: {
-        id: parseInt(id),
-      },
-    });
-
-    // Revalidate the cache and redirect
-    revalidatePath("/announcements"); // Update this path to match your announcements page
-    return { success: true, error: false };
-  } catch (err) {
-    console.error(err);
-    return { success: false, error: true };
-  }
-};
-
 export const createLesson = async (
   currentState: CurrentState,
   data: LessonSchema
@@ -657,27 +610,7 @@ export const createLesson = async (
     return { success: false, error: true };
   }
 };
-// export const createLesson = async (data: LessonSchema) => {
-//   try {
-//     await prisma.lesson.create({
-//       data: {
-//         name: "Mathematics Lesson",
-//         day: "FRIDAY",
-//         startTime: "data.startTime",
-//         endTime: "data.endTime",
-//         subjectId: 9,
-//         classId: 9,
-//         teacherId: "data.teacherId",
-//       },
-//     });
 
-//     revalidatePath("/lessons");
-//     return { success: true, error: false };
-//   } catch (err) {
-//     console.error(err);
-//     return { success: false, error: true };
-//   }
-// };
 
 export const updateLesson = async (data: LessonSchema & { id: number }) => {
   try {
@@ -725,13 +658,18 @@ export const deleteLesson = async (formData: FormData) => {
 
 export const createAttendance = async (data: AttendanceSchema) => {
   try {
-    const parsedDate = new Date(data.date).toISOString();
+    // Ensure the date is a valid ISO 8601 timestamp
+    // const date = new Date(data.date);
+    // if (isNaN(date.getTime())) {
+    //   throw new Error("Invalid date value!");
+    // }
+
     await prisma.attendance.create({
       data: {
         date: data.date,
         present: data.present,
         studentId: data.studentId,
-        lessonId: data.lessonId
+        lessonId: data.lessonId,
       },
     });
 
@@ -742,7 +680,6 @@ export const createAttendance = async (data: AttendanceSchema) => {
     return { success: false, error: true };
   }
 };
-
 export const updateAttendance = async (data: AttendanceSchema & { id: number }) => {
   try {
     await prisma.attendance.update({
@@ -845,3 +782,50 @@ export const deleteResult = async (formData: FormData) => {
   }
 };
 
+export const createAnnouncement = async (data: AnnouncementSchema) => {
+  try {
+    const announcement = await prisma.announcement.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        date: data.date,
+        classId: data.classId || null, // Handle optional classId
+      },
+    });
+    return { success: true, error: false, data: announcement };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to create announcement" };
+  }
+};
+
+export const updateAnnouncement = async (id: number, data: Partial<AnnouncementSchema>) => {
+  try {
+    const announcement = await prisma.announcement.update({
+      where: { id },
+      data: {
+        title: data.title || undefined,
+        description: data.description || undefined,
+        date: data.date || undefined,
+        classId: data.classId || null, // Handle optional classId
+      },
+    });
+    return { success: true, error: false, data: announcement };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to update announcement" };
+  }
+};
+
+
+export const deleteAnnouncement = async (id: number) => {
+  try {
+    await prisma.announcement.delete({
+      where: { id },
+    });
+    return { success: true, error: false, message: "Announcement deleted successfully" };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to delete announcement" };
+  }
+};

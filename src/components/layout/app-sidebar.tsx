@@ -143,26 +143,26 @@ const menuItems: MenuGroup[] = [
   },
 ]
 
-const footerItems: MenuItem[] = [
-  {
-    icon: UserCircle,
-    label: "Profile",
-    href: "/profile",
-    visible: ["admin", "teacher", "student", "parent"],
-  },
-  {
-    icon: Settings,
-    label: "Settings",
-    href: "/settings",
-    visible: ["admin", "teacher", "student", "parent"],
-  },
-  {
-    icon: LogOut,
-    label: "Logout",
-    href: "/logout",
-    visible: ["admin", "teacher", "student", "parent"],
-  },
-]
+// const footerItems: MenuItem[] = [
+//   {
+//     icon: UserCircle,
+//     label: "Profile",
+//     href: "/profile",
+//     visible: ["admin", "teacher", "student", "parent"],
+//   },
+//   {
+//     icon: Settings,
+//     label: "Settings",
+//     href: "/settings",
+//     visible: ["admin", "teacher", "student", "parent"],
+//   },
+//   {
+//     icon: LogOut,
+//     label: "Logout",
+//     href: "/logout",
+//     visible: ["admin", "teacher", "student", "parent"],
+//   },
+// ]
 
 interface AppSidebarProps {
   userRole: string
@@ -213,7 +213,7 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter className="border-t">
+      {/* <SidebarFooter className="border-t">
         <SidebarMenu>
           {footerItems.map((item) => {
             if (item.visible.includes(userRole)) {
@@ -231,7 +231,7 @@ export function AppSidebar({ userRole }: AppSidebarProps) {
             }
           })}
         </SidebarMenu>
-      </SidebarFooter>
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   )

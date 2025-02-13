@@ -119,12 +119,9 @@ export type ParentSchema = z.infer<typeof parentSchema>
 export const announcementSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  date: z.string().min(1, "Date is required"),
-  class: z.array(z.number()).length(1), 
+  date: z.coerce.date(), // Ensure the date is a valid Date object
+  classId: z.number().nullable().optional(), 
 });
-
-// const DayEnum = z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]);
-
 export type AnnouncementSchema = z.infer<typeof announcementSchema>;
 
 export const lessonSchema = z.object({

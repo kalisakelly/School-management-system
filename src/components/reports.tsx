@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,6 +20,8 @@ const ReportPage = () => {
   const [classId, setClassId] = useState<string>("")
   const [studentId, setStudentId] = useState<string>("")
   const [teacherId, setTeacherId] = useState<string>("")
+  const [lessonId, setLessonId] = useState<string>("") // New field for lesson ID
+  const [present, setPresent] = useState<string | null>(null) // New field for present/absent status
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleGenerateReport = async () => {
@@ -43,6 +44,8 @@ const ReportPage = () => {
           classId,
           studentId,
           teacherId,
+          lessonId: lessonId || undefined, // Send only if provided
+          present: present === "Yes" ? true : present === "No" ? false : undefined, // Convert to boolean
         }),
       })
 
@@ -68,8 +71,9 @@ const ReportPage = () => {
 
   return (
     <Card className="w-full max-w-2xl mx-auto border-none">
-     <h3 className="text-xl pl-5 py-4 font-semibold">Generate Report</h3>
-      <CardContent className="space-y-6 ">
+      <h3 className="text-xl pl-5 py-4 font-semibold">Generate Report</h3>
+      <CardContent className="space-y-6">
+        {/* Date Range */}
         <div className="space-y-2">
           <Label htmlFor="dateRange" className="">
             Date Range
@@ -77,6 +81,7 @@ const ReportPage = () => {
           <DatePickerWithRange value={dateRange} onChange={(newDateRange) => setDateRange(newDateRange as DateRange | undefined)} />
         </div>
 
+        {/* Report Type */}
         <div className="space-y-2">
           <Label htmlFor="reportType" className="">
             Report Type
@@ -96,70 +101,58 @@ const ReportPage = () => {
           </Select>
         </div>
 
+        {/* Attendance Report Fields */}
         {reportType === "attendance" && (
-          <div className="space-y-2">
-            <Label htmlFor="classOrStudentId" className="">
-              Class ID or Student ID (Optional)
-            </Label>
-            <Input
-              id="classOrStudentId"
-              type="text"
-              placeholder="Enter Class ID or Student ID"
-              value={classId || studentId}
-              onChange={(e) => (classId ? setClassId(e.target.value) : setStudentId(e.target.value))}
-              className="w-full"
-            />
-          </div>
+          <>
+            {/* Class ID or Student ID */}
+            <div className="space-y-2">
+              <Label htmlFor="classOrStudentId" className="">
+                Class ID or Student ID (Optional)
+              </Label>
+              <Input
+                id="classOrStudentId"
+                type="number"
+                placeholder="Enter Class ID or Student ID"
+                value={classId || studentId}
+                onChange={(e) => (classId ? setClassId(e.target.value) : setStudentId(e.target.value))}
+                className="w-full"
+              />
+            </div>
+
+            {/* Lesson ID */}
+            <div className="space-y-2">
+              <Label htmlFor="lessonId" className="">
+                Lesson ID (Optional)
+              </Label>
+              <Input
+                id="lessonId"
+                type="number"
+                placeholder="Enter Lesson ID"
+                value={lessonId}
+                onChange={(e) => setLessonId(e.target.value)}
+                className="w-full"
+              />
+            </div>
+
+            {/* Present/Absent Status */}
+            <div className="space-y-2">
+              <Label htmlFor="present" className="">
+                Present/Absent (Optional)
+              </Label>
+              <Select value={present} onValueChange={setPresent}>
+                <SelectTrigger id="present" className="w-full">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Yes">Present</SelectItem>
+                  <SelectItem value="No">Absent</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
         )}
 
-        {reportType === "performance" && (
-          <div className="space-y-2">
-            <Label htmlFor="studentId" className="">
-              Student ID
-            </Label>
-            <Input
-              id="studentId"
-              type="text"
-              placeholder="Enter Student ID"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              className="w-full"
-            />
-          </div>
-        )}
-
-        {(reportType === "events" || reportType === "class-composition") && (
-          <div className="space-y-2">
-            <Label htmlFor="classId" className="">
-              Class ID
-            </Label>
-            <Input
-              id="classId"
-              type="text"
-              placeholder="Enter Class ID"
-              value={classId}
-              onChange={(e) => setClassId(e.target.value)}
-              className="w-full"
-            />
-          </div>
-        )}
-
-        {reportType === "assignments" && (
-          <div className="space-y-2">
-            <Label htmlFor="teacherId" className="">
-              Teacher ID
-            </Label>
-            <Input
-              id="teacherId"
-              type="text"
-              placeholder="Enter Teacher ID"
-              value={teacherId}
-              onChange={(e) => setTeacherId(e.target.value)}
-              className="w-full"
-            />
-          </div>
-        )}
-
+        {/* Generate Report Button */}
         <Button onClick={handleGenerateReport} disabled={isLoading} className="w-full text font-semibold">
           {isLoading ? (
             <>
@@ -176,4 +169,3 @@ const ReportPage = () => {
 }
 
 export default ReportPage
-
