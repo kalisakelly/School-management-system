@@ -109,6 +109,14 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           };
           break;
 
+        case "assignment":
+          relatedData = {
+            lessons: await prisma.lesson.findMany({
+              select: { id: true, name: true },
+            }),            
+          };
+          break;
+
         default:
           console.error(`Unsupported table: ${table}`);
           throw new Error(`Unsupported table: ${table}`);

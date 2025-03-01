@@ -11,7 +11,8 @@ import {
   AnnouncementSchema,
   LessonSchema,
   AttendanceSchema,
-  ResultSchema
+  ResultSchema,
+  AssignmentSchema
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
@@ -827,5 +828,81 @@ export const deleteAnnouncement = async (id: number) => {
   } catch (err) {
     console.error(err);
     return { success: false, error: true, message: "Failed to delete announcement" };
+  }
+};
+
+
+export const createAssignment = async (data: AssignmentSchema) => {
+  try {
+    const assignment = await prisma.assignment.create({
+      data: {
+        title: data.title,
+        startDate: data.startDate,
+        dueDate: data.dueDate,
+        lessonId: data.lessonId,
+      },
+    });
+    return { success: true, error: false, data: assignment };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to create assignment" };
+  }
+};
+
+export const updateAssignment = async (id: number, data: Partial<AssignmentSchema>) => {
+  try {
+    const assignment = await prisma.assignment.update({
+      where: { id },
+      data: {
+        title: data.title || undefined,
+        startDate: data.startDate || undefined,
+        dueDate: data.dueDate || undefined,
+        lessonId: data.lessonId || undefined,
+      },
+    });
+    return { success: true, error: false, data: assignment };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to update assignment" };
+  }
+};
+
+export const deleteAssignment = async (id: number) => {
+  try {
+    await prisma.assignment.delete({
+      where: { id },
+    });
+    return { success: true, error: false, message: "Assignment deleted successfully" };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to delete assignment" };
+  }
+};
+
+export const getAssignmentById = async (id: number) => {
+  try {
+    const assignment = await prisma.assignment.findUnique({
+      where: { id },
+      include: { lesson: true, results: true },
+    });
+    if (!assignment) {
+      return { success: false, error: true, message: "Assignment not found" };
+    }
+    return { success: true, error: false, data: assignment };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to retrieve assignment" };
+  }
+};
+
+export const getAllAssignments = async () => {
+  try {
+    const assignments = await prisma.assignment.findMany({
+      include: { lesson: true, results: true },
+    });
+    return { success: true, error: false, data: assignments };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to retrieve assignments" };
   }
 };

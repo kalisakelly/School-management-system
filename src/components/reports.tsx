@@ -16,12 +16,11 @@ const ReportPage = () => {
     from: subDays(new Date(), 30),
     to: new Date(),
   })
-  const [reportType, setReportType] = useState<string>("announcement")
+  const [reportType, setReportType] = useState<string>("attendance")
   const [classId, setClassId] = useState<string>("")
   const [studentId, setStudentId] = useState<string>("")
-  const [teacherId, setTeacherId] = useState<string>("")
-  const [lessonId, setLessonId] = useState<string>("") // New field for lesson ID
-  const [present, setPresent] = useState<string | null>(null) // New field for present/absent status
+  const [lessonId, setLessonId] = useState<string>("")
+  const [present, setPresent] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleGenerateReport = async () => {
@@ -41,11 +40,7 @@ const ReportPage = () => {
           startDate: dateRange.from,
           endDate: dateRange.to,
           type: reportType,
-          classId,
-          studentId,
-          teacherId,
-          lessonId: lessonId || undefined, // Send only if provided
-          present: present === "Yes" ? true : present === "No" ? false : undefined, // Convert to boolean
+          present: present === "Yes" ? true : present === "No" ? false : undefined,
         }),
       })
 
@@ -75,82 +70,29 @@ const ReportPage = () => {
       <CardContent className="space-y-6">
         {/* Date Range */}
         <div className="space-y-2">
-          <Label htmlFor="dateRange" className="">
-            Date Range
-          </Label>
+          <Label htmlFor="dateRange">Date Range</Label>
           <DatePickerWithRange value={dateRange} onChange={(newDateRange) => setDateRange(newDateRange as DateRange | undefined)} />
         </div>
 
         {/* Report Type */}
         <div className="space-y-2">
-          <Label htmlFor="reportType" className="">
-            Report Type
-          </Label>
+          <Label htmlFor="reportType">Report Type</Label>
           <Select value={reportType} onValueChange={setReportType}>
             <SelectTrigger id="reportType" className="w-full">
               <SelectValue placeholder="Select report type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="announcement">Announcement Report</SelectItem>
               <SelectItem value="attendance">Attendance Report</SelectItem>
+              <SelectItem value="announcement">Announcement Report</SelectItem>
+              <SelectItem value="exam">Exam Report</SelectItem>
+              <SelectItem value="assignment">Assignment Report</SelectItem>
+              <SelectItem value="event">Event Report</SelectItem>
               <SelectItem value="performance">Student Performance Report</SelectItem>
-              <SelectItem value="events">Class Event Report</SelectItem>
-              <SelectItem value="assignments">Teacher Assignment Report</SelectItem>
               <SelectItem value="class-composition">Class Composition Report</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Attendance Report Fields */}
-        {reportType === "attendance" && (
-          <>
-            {/* Class ID or Student ID */}
-            <div className="space-y-2">
-              <Label htmlFor="classOrStudentId" className="">
-                Class ID or Student ID (Optional)
-              </Label>
-              <Input
-                id="classOrStudentId"
-                type="number"
-                placeholder="Enter Class ID or Student ID"
-                value={classId || studentId}
-                onChange={(e) => (classId ? setClassId(e.target.value) : setStudentId(e.target.value))}
-                className="w-full"
-              />
-            </div>
-
-            {/* Lesson ID */}
-            <div className="space-y-2">
-              <Label htmlFor="lessonId" className="">
-                Lesson ID (Optional)
-              </Label>
-              <Input
-                id="lessonId"
-                type="number"
-                placeholder="Enter Lesson ID"
-                value={lessonId}
-                onChange={(e) => setLessonId(e.target.value)}
-                className="w-full"
-              />
-            </div>
-
-            {/* Present/Absent Status */}
-            <div className="space-y-2">
-              <Label htmlFor="present" className="">
-                Present/Absent (Optional)
-              </Label>
-              <Select value={present} onValueChange={setPresent}>
-                <SelectTrigger id="present" className="w-full">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Yes">Present</SelectItem>
-                  <SelectItem value="No">Absent</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </>
-        )}
 
         {/* Generate Report Button */}
         <Button onClick={handleGenerateReport} disabled={isLoading} className="w-full text font-semibold">

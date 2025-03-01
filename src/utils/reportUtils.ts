@@ -21,9 +21,6 @@ export async function generateAttendanceReport(
         gte: startDate, // Greater than or equal to start date
         lte: endDate,   // Less than or equal to end date
       },
-      ...(lessonId !== undefined && { lessonId }), // Include lessonId if provided (number)
-      ...(studentId !== undefined && { studentId }), // Include studentId if provided (string)
-      ...(present !== undefined && { present }), // Include presence status if provided
     },
     include: {
       student: true, // Include related student data

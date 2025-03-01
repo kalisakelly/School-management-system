@@ -160,3 +160,14 @@ export const resultSchema = z.object({
 export type ResultSchema = z.infer<typeof resultSchema>;
 
 
+export const assignmentSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  startDate: z.coerce.date({ message: "End time is required!" }),
+  dueDate: z.coerce.date({ message: "End time is required!" }),
+  lessonId: z.coerce.number().optional(),
+});
+
+// Export the inferred type for type safety
+export type AssignmentSchema = z.infer<typeof assignmentSchema>;
+
+
