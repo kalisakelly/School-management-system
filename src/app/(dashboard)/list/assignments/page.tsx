@@ -29,21 +29,28 @@ const AssignmentListPage = async ({
   
   const columns = [
     {
-      header: "Subject Name",
-      accessor: "name",
+      header: "Assignment Title",
+      accessor: "title", // Display the title of the assignment
     },
     {
-      header: "Class",
-      accessor: "class",
-    },
-    {
-      header: "Teacher",
-      accessor: "teacher",
-      className: "hidden md:table-cell",
+      header: "Start Date",
+      accessor: "startDate", // Display the start date of the assignment
     },
     {
       header: "Due Date",
-      accessor: "dueDate",
+      accessor: "dueDate", // Display the due date of the assignment
+    },
+    {
+      header: "Subject Name",
+      accessor: "subjectName", // From related lesson -> subject
+    },
+    {
+      header: "Class",
+      accessor: "className", // From related lesson -> class
+    },
+    {
+      header: "Teacher",
+      accessor: "teacher", // From related lesson -> teacher
       className: "hidden md:table-cell",
     },
     ...(role === "admin" || role === "teacher"
@@ -56,18 +63,19 @@ const AssignmentListPage = async ({
       : []),
   ];
   
+  
   const renderRow = (item: AssignmentList) => (
     <tr
       key={item.id}
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
     >
-      <td className="flex items-center gap-4 p-4">{item.lesson.subject.name}</td>
+      <td className="p-4">{item.title}</td>
+      <td>{new Intl.DateTimeFormat("en-US").format(item.startDate)}</td>
+      <td>{new Intl.DateTimeFormat("en-US").format(item.dueDate)}</td>
+      <td>{item.lesson.subject.name}</td>
       <td>{item.lesson.class.name}</td>
       <td className="hidden md:table-cell">
         {item.lesson.teacher.name + " " + item.lesson.teacher.surname}
-      </td>
-      <td className="hidden md:table-cell">
-        {new Intl.DateTimeFormat("en-US").format(item.dueDate)}
       </td>
       <td>
         <div className="flex items-center gap-2">
@@ -81,6 +89,7 @@ const AssignmentListPage = async ({
       </td>
     </tr>
   );
+  
 
   const { page, ...queryParams } = searchParams;
 

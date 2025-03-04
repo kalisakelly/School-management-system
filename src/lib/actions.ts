@@ -12,7 +12,8 @@ import {
   LessonSchema,
   AttendanceSchema,
   ResultSchema,
-  AssignmentSchema
+  AssignmentSchema,
+  EventSchema
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
@@ -904,5 +905,81 @@ export const getAllAssignments = async () => {
   } catch (err) {
     console.error(err);
     return { success: false, error: true, message: "Failed to retrieve assignments" };
+  }
+};
+
+
+export const createEvent = async (data:EventSchema) => {
+  try {
+    const assignment = await prisma.assignment.create({
+      data: {
+        title: data.title,
+        description:data.description,
+        startDate: data.startDate,
+        endTime: data.endTime,
+      },
+    });
+    return { success: true, error: false, data: assignment };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to create assignment" };
+  }
+}
+
+export const updateEvent = async (id: number, data: Partial<EventSchema>) => {
+  try {
+    const event = await prisma.event.update({
+      where: { id },
+      data: {
+        title: data.title || undefined,
+        description: data.description || undefined,
+        startDate: data.startDate || undefined,
+        endTime: data.endTime || undefined,
+      },
+    });
+    return { success: true, error: false, data: event };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to update event" };
+  }
+};
+
+export const deleteEvent = async (id: number) => {
+  try {
+    await prisma.event.delete({
+      where: { id },
+    });
+    return { success: true, error: false, message: "Event deleted successfully" };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to delete event" };
+  }
+};
+
+export const getEventById = async (id: number) => {
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id },
+      include: { someRelatedData: true }, // Adjust this if the event has relations
+    });
+    if (!event) {
+      return { success: false, error: true, message: "Event not found" };
+    }
+    return { success: true, error: false, data: event };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to retrieve event" };
+  }
+};
+
+export const getAllEvents = async () => {
+  try {
+    const events = await prisma.event.findMany({
+      include: { someRelatedData: true }, // Adjust this as needed for related data
+    });
+    return { success: true, error: false, data: events };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: true, message: "Failed to retrieve events" };
   }
 };

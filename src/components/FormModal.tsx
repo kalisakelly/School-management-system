@@ -31,7 +31,6 @@ const deleteActionMap = {
   assignment: deleteAssignment, // Added assignment delete action
   result: deleteSubject,
   event: deleteSubject,
-  attendance: deleteAttendance,
 };
 
 // Lazy load forms
@@ -67,7 +66,10 @@ const AnnouncementForm = dynamic(() => import("./forms/Announcement"), {
 });
 const AssignmentForm = dynamic(() => import("./forms/Assignment"), {
   loading: () => <h1>Loading...</h1>,
-}); // Added AssignmentForm
+});
+const EventForm = dynamic(() => import("./forms/Event"), {
+  loading: () => <h1>Loading...</h1>,
+});
 
 // Forms mapping
 const forms: {
@@ -108,6 +110,9 @@ const forms: {
   announcement: (setOpen, type, data, relatedData) => (
     <AnnouncementForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
   ),
+  event: (setOpen, type, data, relatedData) => (
+    <EventForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
+  ), // Added EventForm
   assignment: (setOpen, type, data, relatedData) => (
     <AssignmentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
   ), // Added AssignmentForm

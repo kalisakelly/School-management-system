@@ -14,7 +14,7 @@ export type FormContainerProps = {
     | "assignment"
     | "result"
     | "attendance"
-    | "event"
+    | "event"  // Added event here
     | "announcement";
   type: "create" | "update" | "delete";
   data?: any;
@@ -113,7 +113,13 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           relatedData = {
             lessons: await prisma.lesson.findMany({
               select: { id: true, name: true },
-            }),            
+            }),
+          };
+          break;
+
+        case "event":  // Added the case for 'event'
+          relatedData = {
+            events: await prisma.event.findMany({ select: { id: true, title: true, startDate: true, endTime: true } }),  // Example related data for events
           };
           break;
 

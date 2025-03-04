@@ -171,3 +171,14 @@ export const assignmentSchema = z.object({
 export type AssignmentSchema = z.infer<typeof assignmentSchema>;
 
 
+export const eventSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "description is required"),
+  startDate: z.coerce.date({ message: "Start time is required!" }),
+  dueDate: z.coerce.date({ message: "End time is required!" }),
+});
+
+export type EventSchema = z.infer<typeof eventSchema>;
+
+
+
