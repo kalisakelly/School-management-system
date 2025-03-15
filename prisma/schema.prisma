@@ -164,8 +164,8 @@ model Event {
   startTime   DateTime
   endTime     DateTime
 
-  // classId Int?
-  // class   Class? @relation(fields: [classId], references: [id])
+  classId Int?
+  class   Class? @relation(fields: [classId], references: [id])
 }
 
 model Announcement {

@@ -1,35 +1,35 @@
-"use client"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
-import { toast } from "react-toastify"
-import type { DateRange } from "react-day-picker"
-import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange"
-import { Loader } from "lucide-react"
-import { subDays } from "date-fns"
+"use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "react-toastify";
+import type { DateRange } from "react-day-picker";
+import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
+import { Loader } from "lucide-react";
+import { subDays } from "date-fns";
 
 const ReportPage = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: subDays(new Date(), 30),
     to: new Date(),
-  })
-  const [reportType, setReportType] = useState<string>("attendance")
-  const [classId, setClassId] = useState<string>("")
-  const [studentId, setStudentId] = useState<string>("")
-  const [lessonId, setLessonId] = useState<string>("")
-  const [present, setPresent] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  });
+  const [reportType, setReportType] = useState<string>("attendance");
+  const [classId, setClassId] = useState<string>("");
+  const [studentId, setStudentId] = useState<string>("");
+  const [lessonId, setLessonId] = useState<string>("");
+  const [present, setPresent] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleGenerateReport = async () => {
     if (!dateRange?.from || !dateRange?.to) {
-      toast.error("Please select a date range")
-      return
+      toast.error("Please select a date range");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await fetch("/api/report", {
         method: "POST",
@@ -42,27 +42,32 @@ const ReportPage = () => {
           type: reportType,
           present: present === "Yes" ? true : present === "No" ? false : undefined,
         }),
-      })
+      });
 
       if (response.ok) {
-        const blob = await response.blob()
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
-        link.download = `${reportType.charAt(0).toUpperCase() + reportType.slice(1)}Report.xlsx`
-        link.click()
-        toast.success("Report generated successfully!")
+        const blob = await response.blob();
+        if (blob.size === 0) {
+          toast.warning("No data found for the selected criteria.");
+          return;
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${reportType.charAt(0).toUpperCase() + reportType.slice(1)}Report.xlsx`;
+        link.click();
+        toast.success("Report generated successfully!");
       } else {
-        const { error } = await response.json()
-        throw new Error(error || "Failed to generate report")
+        const { error } = await response.json();
+        throw new Error(error || "Failed to generate report");
       }
     } catch (error) {
-      console.error(`Error generating ${reportType} report:`, error)
-      toast.error(`Failed to generate the ${reportType} report!`)
+      console.error(`Error generating ${reportType} report:`, error);
+      toast.error(`Failed to generate the ${reportType} report!`);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto border-none">
@@ -85,14 +90,14 @@ const ReportPage = () => {
               <SelectItem value="attendance">Attendance Report</SelectItem>
               <SelectItem value="announcement">Announcement Report</SelectItem>
               <SelectItem value="exam">Exam Report</SelectItem>
-              <SelectItem value="assignment">Assignment Report</SelectItem>
-              <SelectItem value="event">Event Report</SelectItem>
-              <SelectItem value="performance">Student Performance Report</SelectItem>
-              <SelectItem value="class-composition">Class Composition Report</SelectItem>
+              <SelectItem value="assignments">Assignment Report</SelectItem>
+              <SelectItem value="parents">Parents report</SelectItem>
+              <SelectItem value="students">Students report</SelectItem>
+              <SelectItem value="classes">Class Composition Report</SelectItem>
+              <SelectItem value="lessons">Lessons Report</SelectItem>
             </SelectContent>
           </Select>
         </div>
-
 
         {/* Generate Report Button */}
         <Button onClick={handleGenerateReport} disabled={isLoading} className="w-full text font-semibold">
@@ -107,7 +112,7 @@ const ReportPage = () => {
         </Button>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default ReportPage
+export default ReportPage;
