@@ -34,9 +34,10 @@ const AssignmentForm = ({
     resolver: zodResolver(assignmentSchema),
     defaultValues: {
       title: data?.title || "",
-      startDate: data?.startDate ? formatDate(data.startDate) : "", // Format date if provided
+      startDate: data?.startDate ? formatDate(data.startDate) : "",
       dueDate: data?.dueDate ? formatDate(data.dueDate) : "",
-      lessonId: 1,
+      assignment: data?.assignment || "", // Changed from `assignmenttx`
+      lessonId: data?.lessonId || 1, // Avoid hardcoding if possible
     },
   });
 
@@ -117,15 +118,22 @@ const AssignmentForm = ({
           defaultValue={formatDate(data?.dueDate)}
           error={errors?.dueDate}
         />
+       <InputField
+          label="Assignment Link"
+          name="assignment" // Must match Prisma model
+          register={register}
+          defaultValue={data?.assignment} // Not `assignmenttx`
+          error={errors?.assignment} // Ensure Zod schema uses `assignment`
+        />
 
-<InputField
-  label="Lesson"
-  name="lessonId"
-  type="number"
-  register={register}  // This assumes you're using react-hook-form for validation
-  defaultValue=""      // You can set an initial default value if needed
-  error={errors?.lessonId} // Error handling for the lessonId
-/>
+        <InputField
+          label="Lesson"
+          name="lessonId"
+          type="number"
+          register={register}  
+          defaultValue=""      
+          error={errors?.lessonId} 
+        />
 
       </div>
 

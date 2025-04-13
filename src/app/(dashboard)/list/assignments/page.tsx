@@ -45,6 +45,10 @@ const AssignmentListPage = async ({
       accessor: "subjectName", // From related lesson -> subject
     },
     {
+      header: "Assignment Link",
+      accessor: "assigment", // From related lesson -> subject
+    },
+    {
       header: "Class",
       accessor: "className", // From related lesson -> class
     },
@@ -73,6 +77,7 @@ const AssignmentListPage = async ({
       <td>{new Intl.DateTimeFormat("en-US").format(item.startDate)}</td>
       <td>{new Intl.DateTimeFormat("en-US").format(item.dueDate)}</td>
       <td>{item.lesson.subject.name}</td>
+      <td>{item.assignment}</td>
       <td>{item.lesson.class.name}</td>
       <td className="hidden md:table-cell">
         {item.lesson.teacher.name + " " + item.lesson.teacher.surname}

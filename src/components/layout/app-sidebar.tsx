@@ -109,12 +109,12 @@ const menuItems: MenuGroup[] = [
         href: "/list/assignments",
         visible: ["admin", "teacher", "student", "parent"],
       },
-      {
-        icon: Award,
-        label: "Results",
-        href: "/list/results",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
+      // {
+      //   icon: Award,
+      //   label: "Results",
+      //   href: "/list/results",
+      //   visible: ["admin", "teacher", "student", "parent"],
+      // },
       {
         icon: CalendarCheck2,
         label: "Attendance",
@@ -127,12 +127,12 @@ const menuItems: MenuGroup[] = [
         href: "/list/events",
         visible: ["admin", "teacher", "student", "parent"],
       },
-      {
-        icon: MessageSquare,
-        label: "Messages",
-        href: "/list/messages",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
+      // {
+      //   icon: MessageSquare,
+      //   label: "Messages",
+      //   href: "/list/messages",
+      //   visible: ["admin", "teacher", "student", "parent"],
+      // },
       {
         icon: Bell,
         label: "Announcements",

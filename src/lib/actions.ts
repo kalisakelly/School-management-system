@@ -839,6 +839,7 @@ export const createAssignment = async (data: AssignmentSchema) => {
       data: {
         title: data.title,
         startDate: data.startDate,
+        assignment:data.assignment,
         dueDate: data.dueDate,
         lessonId: data.lessonId,
       },
