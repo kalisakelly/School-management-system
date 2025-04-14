@@ -150,9 +150,9 @@ export type AttendanceSchema = z.infer<typeof attendanceSchema>;
 
 export const resultSchema = z.object({
 
-  score: z.number().min(0, "Score must be a positive number"),
-  examId: z.string().min(1, "Exam is required"),
-  assignmentId: z.string().min(1, "Assignment is required"),
+  score: z.coerce.number().min(1, { message: "Score name is required!" }),
+  examId: z.string(),
+  assignmentId: z.string(),
   studentId: z.string().min(1, "Student is required"),
 
 })
@@ -174,9 +174,9 @@ export type AssignmentSchema = z.infer<typeof assignmentSchema>;
 
 export const eventSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "description is required"),
-  startDate: z.coerce.date({ message: "Start time is required!" }),
-  dueDate: z.coerce.date({ message: "End time is required!" }),
+  description: z.string().min(1, "Description is required"),
+  startTime: z.coerce.date({ message: "Start time is required!" }),
+  endTime: z.coerce.date({ message: "End time is required!" }),
 });
 
 export type EventSchema = z.infer<typeof eventSchema>;

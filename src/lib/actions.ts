@@ -912,11 +912,11 @@ export const getAllAssignments = async () => {
 
 export const createEvent = async (data:EventSchema) => {
   try {
-    const assignment = await prisma.assignment.create({
+    const assignment = await prisma.event.create({
       data: {
         title: data.title,
-        description:data.description,
-        startDate: data.startDate,
+        description: data.description ,
+        startTime: data.startTime ,
         endTime: data.endTime,
       },
     });
@@ -934,7 +934,7 @@ export const updateEvent = async (id: number, data: Partial<EventSchema>) => {
       data: {
         title: data.title || undefined,
         description: data.description || undefined,
-        startDate: data.startDate || undefined,
+        startTime: data.startTime || undefined,
         endTime: data.endTime || undefined,
       },
     });

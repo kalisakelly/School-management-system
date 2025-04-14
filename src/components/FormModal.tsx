@@ -28,7 +28,7 @@ const deleteActionMap = {
   announcement: deleteAnnouncement,
   parent: deleteSubject,
   lesson: deleteSubject,
-  assignment: deleteAssignment, // Added assignment delete action
+  assignment: deleteAssignment,
   result: deleteSubject,
   event: deleteSubject,
 };
@@ -105,8 +105,9 @@ const forms: {
     <AttendanceForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
   ),
   result: (setOpen, type, data, relatedData) => (
-    <ResultForm type={type} data={data} setOpen={setOpen} />
+    <ResultForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
   ),
+  
   announcement: (setOpen, type, data, relatedData) => (
     <AnnouncementForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
   ),

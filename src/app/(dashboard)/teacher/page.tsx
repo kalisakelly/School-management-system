@@ -1,6 +1,7 @@
 // src\app\(dashboard)\list
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
+import ReportPage from "@/components/reports";
 import { auth } from "@clerk/nextjs/server";
 
 const TeacherPage = () => {
@@ -17,7 +18,11 @@ const TeacherPage = () => {
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
         <Announcements />
+        <ReportPage />
+
       </div>
+      <div className="bg-white rounded-lg ">
+        </div>
     </div>
   );
 };
