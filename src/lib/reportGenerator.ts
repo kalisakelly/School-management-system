@@ -89,7 +89,7 @@ export async function generateReport(type: string, params: any) {
       }));
       break;
 
-    case "lessons": // New case for lessons report
+    case "lessons":
       data = await prisma.lesson.findMany({
         where: {
           startTime: {
@@ -114,7 +114,7 @@ export async function generateReport(type: string, params: any) {
       }));
       break;
 
-    case "subjects": // New case for subjects report
+    case "subjects":
       data = await prisma.subject.findMany({
         include: {
           teachers: true,
@@ -128,7 +128,7 @@ export async function generateReport(type: string, params: any) {
       }));
       break;
 
-    case "assignments": // New case for assignments report
+    case "assignments":
       data = await prisma.assignment.findMany({
         where: {
           startDate: {
@@ -154,7 +154,7 @@ export async function generateReport(type: string, params: any) {
       }));
       break;
 
-    case "classes": // New case for classes report
+    case "classes":
       data = await prisma.class.findMany({
         include: {
           supervisor: true,
@@ -176,28 +176,58 @@ export async function generateReport(type: string, params: any) {
         where: {
           AND: [
             { studentId: studentId },
-            {
-              OR: [
-                { exam: { startTime: { gte: new Date(startDate), lte: new Date(endDate) } } },
-                { assignment: { dueDate: { gte: new Date(startDate), lte: new Date(endDate) } } },
-              ],
-            },
+            
           ],
         },
         include: {
           exam: true,
           assignment: true,
+          student: true,
         },
       });
-      reportData = data.map((record) => ({
-        Type: record.examId ? "Exam" : "Assignment",
-        Title: record.exam?.title || record.assignment?.title || "N/A",
-        Score: record.score,
-        Date:
-          record.exam?.startTime?.toISOString().split("T")[0] ||
-          record.assignment?.dueDate?.toISOString().split("T")[0] ||
-          "N/A",
-      }));
+      
+      let totalScore = 0;
+      let maxPossibleScore = 0;
+      
+      reportData = data.map((record) => {
+        const currentScore = record.score || 0;
+        const currentMaxScore = record.maxScore || 
+                              record.exam?.maxScore || 
+                              record.assignment?.maxScore || 
+                              100; // Default to 100 if no max score is found
+        
+        totalScore += currentScore;
+        maxPossibleScore += currentMaxScore;
+        
+        return {
+          Student: `${record.student.name} ${record.student.surname}`,
+          Type: record.examId ? "Exam" : "Assignment",
+          Title: record.exam?.title || record.assignment?.title || "N/A",
+          Score: currentScore,
+          "Max Score": currentMaxScore,
+          "Percentage": ((currentScore / currentMaxScore) * 100).toFixed(2) + "%",
+          Date: record.exam?.startTime?.toISOString().split("T")[0] ||
+              record.assignment?.dueDate?.toISOString().split("T")[0] ||
+              "N/A",
+        };
+      });
+
+      // Add total row if there are records
+      if (reportData.length > 0) {
+        const totalPercentage = maxPossibleScore > 0 
+            ? ((totalScore / maxPossibleScore) * 100).toFixed(2) + "%"
+            : "N/A";
+            
+        reportData.push({
+          Student: "TOTAL",
+          Type: "",
+          Title: "",
+          Score: totalScore,
+          "Max Score": maxPossibleScore,
+          "Percentage": totalPercentage,
+          Date: "",
+        });
+      }
       break;
 
     case "events":
